@@ -1,7 +1,4 @@
 import tkinter as tk
-import menuFrame
-import settingFrame
-import gameFrame
 
 class WindowClass(tk.Tk):
 
@@ -33,6 +30,10 @@ class WindowClass(tk.Tk):
 		self.container.pack()
 
 		# 各フレームのインスタンス生成
+		import menuFrame
+		import settingFrame
+		import gameFrame
+
 		global MenuFrame, SettingFrame, GameFrame
 		MenuFrame = menuFrame.MenuFrameClass(self.container, self)
 		SettingFrame = settingFrame.SettingFrameClass(self.container, self)
@@ -41,7 +42,9 @@ class WindowClass(tk.Tk):
 		self.show_frame('メニューフレーム')
 
 		self.resizable(False, False)
-		self.mainloop()
+
+	def iconify(self):
+		self.iconify()
 
 	def getContainer(self):
 		return self._frame
@@ -63,6 +66,7 @@ class WindowClass(tk.Tk):
 
 	def show_frame(self, targetFrame):
 		global MenuFrame, SettingFrame, GameFrame
+		
 		for F in (MenuFrame, SettingFrame, GameFrame):
 			F.pack_forget()
 			
@@ -92,3 +96,4 @@ class WindowClass(tk.Tk):
 
 if __name__ == '__main__':
 	wc = WindowClass()
+	wc.mainloop()

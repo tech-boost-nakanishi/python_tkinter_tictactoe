@@ -16,3 +16,6 @@ class SettingFrameClass(tk.Frame):
 
 	def getHeight(self):
 		return self.HEIGHT
+
+# if __name__ == '__main__':
+# 	sfc = SettingFrameClass()
