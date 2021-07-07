@@ -72,23 +72,21 @@ class WindowClass(tk.Tk):
 			
 		if targetFrame == 'メニューフレーム':
 			self.setContainer(MenuFrame)
-			self.setWidth(self.getContainer().getWidth())
-			self.setHeight(self.getContainer().getHeight())
 			MenuFrame.pack()
 
 		elif targetFrame == '設定フレーム':
 			self.setContainer(SettingFrame)
-			self.setWidth(self.getContainer().getWidth())
-			self.setHeight(self.getContainer().getHeight())
 			SettingFrame.pack()
 
 		elif targetFrame == 'ゲームフレーム':
 			self.setContainer(GameFrame)
-			self.setWidth(self.getContainer().getWidth())
-			self.setHeight(self.getContainer().getHeight())
 			GameFrame.pack()
 
+		self.setWidth(self.getContainer().getWidth())
+		self.setHeight(self.getContainer().getHeight())
+
 		# ウィンドウを中央に表示
+		self.resizable(False, False)
 		self.update_idletasks()
 		x = (self.winfo_screenwidth() // 2) - (self.getWidth() // 2)
 		y = (self.winfo_screenheight() // 2) - (self.getHeight() // 2)
