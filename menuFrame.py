@@ -1,6 +1,6 @@
 import tkinter as tk
 
-class MenuFrameClass(tk.Frame):
+class MenuFrame(tk.Frame):
 
 	WIDTH = 500
 	HEIGHT = 300
@@ -8,6 +8,7 @@ class MenuFrameClass(tk.Frame):
 	def __init__(self, parent, controller):
 		tk.Frame.__init__(self, parent, width = self.WIDTH, height = self.HEIGHT)
 		self.pack_propagate(0)
+		self.setController(controller)
 
 		global canvas
 		canvas = tk.Canvas(self, width = self.WIDTH, height = self.HEIGHT)
@@ -20,6 +21,12 @@ class MenuFrameClass(tk.Frame):
 
 	def getHeight(self):
 		return self.HEIGHT
+
+	def getController(self):
+		return self.controller
+
+	def setController(self, con):
+		self.controller = con
 
 	def mouseEnter(self, event):
 		tag = event.widget.gettags('current')[0]
@@ -34,14 +41,15 @@ class MenuFrameClass(tk.Frame):
 	def mousePressed(self, event):
 		tag = event.widget.gettags('current')[0]
 
+		import main
 		if tag in ['gamestart', 'gamestarttext']:
-			pass
+			main.show_frame('ゲームフレーム')
 
 		elif tag in ['setting', 'settingtext']:
-			pass
+			main.show_frame('設定フレーム')
 
 		elif tag in ['gamefinish', 'gamefinishtext']:
-			pass
+			self.getController().quit()
 
 	def paint(self):
 		# 背景を設定
@@ -65,6 +73,3 @@ class MenuFrameClass(tk.Frame):
 		canvas.tag_bind('current', '<Enter>', self.mouseEnter)
 		canvas.tag_bind('current', '<Leave>', self.repaint)
 		canvas.tag_bind('current', '<ButtonPress-1>', self.mousePressed)
-
-# if __name__ == '__main__':
-# 	mfc = MenuFrameClass()

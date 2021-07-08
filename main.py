@@ -1,97 +1,64 @@
 import tkinter as tk
+import menuFrame
+import settingFrame
+import gameFrame
 
-class WindowClass(tk.Tk):
+WIDTH = 0
+HEIGHT = 0
 
-	global MenuFrame, SettingFrame, GameFrame
-	WIDTH = 0
-	HEIGHT = 0
+root = tk.Tk()
+root.title('○×ゲーム')
+root.resizable(False, False)
 
-	def __init__(self):
-		tk.Tk.__init__(self)
-		self.title('○×ゲーム')
-		self._frame = None
+# メニューバーを作成
+menubar = tk.Menu(root)
+root.config(menu = menubar)
 
-		# メニューバーを作成
-		menubar = tk.Menu(self)
-		self.config(menu = menubar)
+# メニューバーにメニューを作成
+menu = tk.Menu(menubar)
+menubar.add_cascade(label = 'メニュー', menu = menu)
 
-		# メニューバーにメニューを作成
-		menu = tk.Menu(menubar)
-		menubar.add_cascade(label = 'メニュー', menu = menu)
+# メニューに子メニュー作成
+menu.add_command(label='メインメニュー', command = lambda: show_frame('メニューフレーム'))
+menu.add_command(label='ゲーム開始', command = lambda: show_frame('ゲームフレーム'))
+menu.add_command(label='設定画面', command = lambda: show_frame('設定フレーム'))
+menu.add_separator()
+menu.add_command(label='ゲーム終了', command = root.destroy)
 
-		# メニューに子メニュー作成
-		menu.add_command(label='メインメニュー', command = lambda: self.show_frame('メニューフレーム'))
-		menu.add_command(label='ゲーム開始', command = lambda: self.show_frame('ゲームフレーム'))
-		menu.add_command(label='設定画面', command = lambda: self.show_frame('設定フレーム'))
-		menu.add_separator()
-		menu.add_command(label='ゲーム終了', command = self.destroy)
+container = tk.Frame(root)
+container.pack()
 
-		self.container = tk.Frame(self)
-		self.container.pack()
+menuframe = menuFrame.MenuFrame(container, root)
+settingframe = settingFrame.SettingFrame(container, root)
+gameframe = gameFrame.GameFrame(container, root)
 
-		# 各フレームのインスタンス生成
-		import menuFrame
-		import settingFrame
-		import gameFrame
+def show_frame(targetFrame):
+	global WIDTH, HEIGHT, menuframe, settingframe, gameframe
 
-		global MenuFrame, SettingFrame, GameFrame
-		MenuFrame = menuFrame.MenuFrameClass(self.container, self)
-		SettingFrame = settingFrame.SettingFrameClass(self.container, self)
-		GameFrame = gameFrame.GameFrameClass(self.container, self)
+	for frame in (menuframe, settingframe, gameframe):
+		frame.pack_forget()
 
-		self.show_frame('メニューフレーム')
+	if targetFrame == 'メニューフレーム':
+		WIDTH = menuframe.getWidth()
+		HEIGHT = menuframe.getHeight()
+		menuframe.pack()
 
-		self.resizable(False, False)
+	elif targetFrame == '設定フレーム':
+		WIDTH = settingframe.getWidth()
+		HEIGHT = settingframe.getHeight()
+		settingframe.pack()
 
-	def iconify(self):
-		self.iconify()
+	elif targetFrame == 'ゲームフレーム':
+		WIDTH = gameframe.getWidth()
+		HEIGHT = gameframe.getHeight()
+		gameframe.pack()
 
-	def getContainer(self):
-		return self._frame
+	root.update_idletasks()
+	x = (root.winfo_screenwidth() // 2) - (WIDTH // 2)
+	y = (root.winfo_screenheight() // 2) - (HEIGHT // 2)
+	root.geometry('{}x{}+{}+{}'.format(WIDTH, HEIGHT, x, y))
 
-	def setContainer(self, targetFrame):
-		self._frame = targetFrame
+def launch():
+	root.mainloop()
 
-	def setWidth(self, width):
-		self.WIDTH = width
-
-	def setHeight(self, height):
-		self.HEIGHT = height
-
-	def getWidth(self):
-		return self.WIDTH
-
-	def getHeight(self):
-		return self.HEIGHT
-
-	def show_frame(self, targetFrame):
-		global MenuFrame, SettingFrame, GameFrame
-		
-		for F in (MenuFrame, SettingFrame, GameFrame):
-			F.pack_forget()
-			
-		if targetFrame == 'メニューフレーム':
-			self.setContainer(MenuFrame)
-			MenuFrame.pack()
-
-		elif targetFrame == '設定フレーム':
-			self.setContainer(SettingFrame)
-			SettingFrame.pack()
-
-		elif targetFrame == 'ゲームフレーム':
-			self.setContainer(GameFrame)
-			GameFrame.pack()
-
-		self.setWidth(self.getContainer().getWidth())
-		self.setHeight(self.getContainer().getHeight())
-
-		# ウィンドウを中央に表示
-		self.resizable(False, False)
-		self.update_idletasks()
-		x = (self.winfo_screenwidth() // 2) - (self.getWidth() // 2)
-		y = (self.winfo_screenheight() // 2) - (self.getHeight() // 2)
-		self.geometry('{}x{}+{}+{}'.format(self.getWidth(), self.getHeight(), x, y))
-
-if __name__ == '__main__':
-	wc = WindowClass()
-	wc.mainloop()
+show_frame('メニューフレーム')
