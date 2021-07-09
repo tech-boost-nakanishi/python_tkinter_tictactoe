@@ -1,4 +1,5 @@
 import tkinter as tk
+import main
 
 class MenuFrame(tk.Frame):
 
@@ -7,6 +8,7 @@ class MenuFrame(tk.Frame):
 
 	def __init__(self, parent, controller):
 		tk.Frame.__init__(self, parent, width = self.WIDTH, height = self.HEIGHT)
+		self.pack()
 		self.pack_propagate(0)
 		self.setController(controller)
 
@@ -41,7 +43,6 @@ class MenuFrame(tk.Frame):
 	def mousePressed(self, event):
 		tag = event.widget.gettags('current')[0]
 
-		import main
 		if tag in ['gamestart', 'gamestarttext']:
 			main.show_frame('ゲームフレーム')
 
