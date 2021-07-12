@@ -2,6 +2,16 @@ import tkinter as tk
 import menuFrame
 import settingFrame
 import gameFrame
+import sqlite3
+
+# データの初期設定　マークは○, 順番は先攻
+conn = sqlite3.connect('setting.db')
+cur = conn.cursor()
+cur.execute('CREATE TABLE IF NOT EXISTS settings(id integer, mark integer, attack integer)')
+cur.execute('INSERT INTO settings(id,mark,attack) SELECT 1,0,0 WHERE NOT EXISTS(SELECT 1 FROM settings WHERE id = 1)')
+conn.commit()
+cur.close()
+conn.close()
 
 WIDTH = 0
 HEIGHT = 0
