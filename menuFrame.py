@@ -8,7 +8,6 @@ class MenuFrame(tk.Frame):
 
 	def __init__(self, parent, controller):
 		tk.Frame.__init__(self, parent, width = self.WIDTH, height = self.HEIGHT)
-		self.pack()
 		self.pack_propagate(0)
 		self.setController(controller)
 

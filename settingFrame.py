@@ -11,7 +11,6 @@ class SettingFrame(tk.Frame):
 
 	def __init__(self, parent, controller):
 		tk.Frame.__init__(self, parent, width = self.WIDTH, height = self.HEIGHT, bg = self.bgcolor)
-		self.pack()
 		self.pack_propagate(0)
 
 		tk.Label(self, text="設定画面", font=('Helvetica', 26, "bold"), bg = 'lightgray').place(x = 195, y = 20)

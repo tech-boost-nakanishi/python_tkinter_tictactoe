@@ -49,19 +49,25 @@ def show_frame(targetFrame):
 		frame.pack_forget()
 
 	if targetFrame == 'メニューフレーム':
+		menuframe = menuFrame.MenuFrame(container, root)
+		menuframe.__init__(container, root)
+		menuframe.pack()
 		WIDTH = menuframe.getWidth()
 		HEIGHT = menuframe.getHeight()
-		menuframe.__init__(container, root)
 
 	elif targetFrame == '設定フレーム':
+		settingframe = settingFrame.SettingFrame(container, root)
+		settingframe.__init__(container, root)
+		settingframe.pack()
 		WIDTH = settingframe.getWidth()
 		HEIGHT = settingframe.getHeight()
-		settingframe.__init__(container, root)
 
 	elif targetFrame == 'ゲームフレーム':
+		gameframe = gameFrame.GameFrame(container, root)
+		gameframe.__init__(container, root)
+		gameframe.pack()
 		WIDTH = gameframe.getWidth()
 		HEIGHT = gameframe.getHeight()
-		gameframe.__init__(container, root)
 
 	root.update_idletasks()
 	x = (root.winfo_screenwidth() // 2) - (WIDTH // 2)
@@ -71,4 +77,4 @@ def show_frame(targetFrame):
 def launch():
 	root.mainloop()
 
-show_frame('設定フレーム')
+show_frame('ゲームフレーム')
