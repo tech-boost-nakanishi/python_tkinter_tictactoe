@@ -50,21 +50,18 @@ def show_frame(targetFrame):
 
 	if targetFrame == 'メニューフレーム':
 		menuframe = menuFrame.MenuFrame(container, root)
-		menuframe.__init__(container, root)
 		menuframe.pack()
 		WIDTH = menuframe.getWidth()
 		HEIGHT = menuframe.getHeight()
 
 	elif targetFrame == '設定フレーム':
 		settingframe = settingFrame.SettingFrame(container, root)
-		settingframe.__init__(container, root)
 		settingframe.pack()
 		WIDTH = settingframe.getWidth()
 		HEIGHT = settingframe.getHeight()
 
 	elif targetFrame == 'ゲームフレーム':
 		gameframe = gameFrame.GameFrame(container, root)
-		gameframe.__init__(container, root)
 		gameframe.pack()
 		WIDTH = gameframe.getWidth()
 		HEIGHT = gameframe.getHeight()

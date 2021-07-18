@@ -9,17 +9,26 @@ class GameFrame(tk.Frame):
 
 	WIDTH = 500
 	HEIGHT = 600
-	masucount = 3
-	masuwidth = masuheight = int(Decimal(str(WIDTH / masucount)).quantize(Decimal('0'), rounding=ROUND_HALF_UP))
 	bgcolor = 'lightgray'
 	BLANK = 0
 	USER = 1
 	COMPUTER = 2
+	DRAW = 3
 	turnnum = BLANK
 	board = []
 	global mx, my
 	mx = my = -1
 	isPut = False
+	combination = [
+		[[0, 0], [1, 0], [2, 0]],
+		[[0, 1], [1, 1], [2, 1]],
+		[[0, 2], [1, 2], [2, 2]],
+		[[0, 0], [0, 1], [0, 2]],
+		[[1, 0], [1, 1], [1, 2]],
+		[[2, 0], [2, 1], [2, 2]],
+		[[0, 0], [1, 1], [2, 2]],
+		[[0, 2], [1, 1], [2, 0]],
+	]
 
 	def __init__(self, parent, controller):
 		tk.Frame.__init__(self, parent, width = self.WIDTH, height = self.HEIGHT)
@@ -29,47 +38,45 @@ class GameFrame(tk.Frame):
 		canvas = tk.Canvas(self, width = self.WIDTH, height = self.HEIGHT)
 		canvas.pack()
 
-		self.paint()
-
 		tk.Button(self, text = 'メニュー画面へ', bg = self.bgcolor, highlightbackground = self.bgcolor, width = 10, command = lambda: main.show_frame('メニューフレーム')).place(x = 20, y = 505)
 		tk.Button(self, text = '最初から', bg = self.bgcolor, highlightbackground = self.bgcolor, width = 10, command = lambda: main.show_frame('ゲームフレーム')).place(x = 20, y = 535)
 		tk.Button(self, text = '設定画面へ', bg = self.bgcolor, highlightbackground = self.bgcolor, width = 10, command = lambda: main.show_frame('設定フレーム')).place(x = 20, y = 565)
 
 		# ボードリストの初期化
-		self.board = [[self.BLANK]*self.masucount for i in range(self.masucount)]
+		self.board = [[self.BLANK]*3 for i in range(3)]
+
+		self.masuwidth = self.masuheight = int(Decimal(str(self.WIDTH / len(self.board))).quantize(Decimal('0'), rounding=ROUND_HALF_UP))
 
 		import settingFrame
 		settingframe = settingFrame.SettingFrame(main.container, main.root)
 		self.attackvalue = settingframe.getATTACKVALUE()
 		self.xorovalue = settingframe.getXOROVALUE()
-		if self.attackvalue == 0:
+		if self.attackvalue == 1:
 			self.turnnum = self.USER
 		else:
 			self.turnnum = self.COMPUTER
 
-		thread1 = threading.Thread(target=self.start)
-		thread1.setDaemon(True)
-		thread1.start()
+		self.thread1 = threading.Thread(target=self.start)
+		self.thread1.setDaemon(True)
+		self.thread1.start()
+
+		self.paint()
 
 	def start(self):
 		while True:
 			# ユーザーのターン
 			if self.turnnum == self.USER:
 				print('ユーザー')
-				while self.isPut == False:
-					pass
+				while True:
+					if self.isPut == True:
+						break
 				self.isPut = False
 
 			# コンピューターのターン
 			elif self.turnnum == self.COMPUTER:
 				time.sleep(0.5)
 				print('コンピューター')
-				while True:
-					rx = random.randint(0, self.masucount - 1)
-					ry = random.randint(0, self.masucount - 1)
-					if self.board[rx][ry] == self.BLANK:
-						self.board[rx][ry] = self.COMPUTER
-						break
+				self.computerAI()
 				self.turnnum = self.USER
 
 			# 再描画
@@ -77,7 +84,7 @@ class GameFrame(tk.Frame):
 
 			# 勝敗のチェック
 
-		thread1.join()
+		self.thread1.join()
 
 	def getWidth(self):
 		return self.WIDTH
@@ -86,12 +93,12 @@ class GameFrame(tk.Frame):
 		return self.HEIGHT
 
 	def getX(self, mx):
-		for i in range(self.masucount):
+		for i in range(len(self.board)):
 			if mx >= i * self.masuwidth and mx <= i * self.masuwidth + self.masuwidth:
 				return i
 
 	def getY(self, my):
-		for i in range(self.masucount):
+		for i in range(len(self.board)):
 			if my >= i * self.masuheight and my <= i * self.masuheight + self.masuheight:
 				return i
 
@@ -157,15 +164,80 @@ class GameFrame(tk.Frame):
 		# 境界線
 		linecolor = 'black'
 		# 横線
-		for i in range(self.masucount - 1):
+		for i in range(len(self.board)):
 			canvas.create_line(0, (i + 1) * self.masuheight, self.WIDTH, (i + 1) * self.masuheight, fill = linecolor)
 
 		# 縦線
-		for i in range(self.masucount - 1):
+		for i in range(len(self.board)):
 			canvas.create_line((i + 1) * self.masuwidth, 0, (i + 1) * self.masuwidth, self.WIDTH, fill = linecolor)
-
-		self.repaint()
 
 		# マウスイベント
 		canvas.bind('<Button-1>', self.mousePressed)
-		canvas.bind('<ButtonRelease-1>', self.repaint)
+
+		self.repaint()
+
+	def computerAI(self):
+		# どちらかがリーチの場合
+		userlist = []
+		for i in range(len(self.combination)):
+			usercount = computercount = blankcount = 0
+			blankindex = []
+			for j in range(len(self.combination[i])):
+				x, y = self.combination[i][j][0], self.combination[i][j][1]
+				if self.board[x][y] == self.USER:
+					usercount += 1
+				elif self.board[x][y] == self.COMPUTER:
+					computercount += 1
+				elif self.board[x][y] == self.BLANK:
+					blankcount += 1
+					blankindex.append([x, y])
+
+			# コンピューターがリーチなら
+			if computercount == 2 and blankcount == 1:
+				self.board[blankindex[0][0]][blankindex[0][1]] = self.COMPUTER
+				return
+
+			# ユーザーがリーチならuserlistに追加
+			if usercount == 2 and blankcount == 1:
+				userlist.append([blankindex[0][0], blankindex[0][1]])
+
+		# ユーザーがリーチのパターンがあれば
+		if len(userlist) > 0:
+			rand = random.randint(0, len(userlist) - 1)
+			self.board[userlist[rand][0]][userlist[rand][1]] = self.COMPUTER
+			return
+
+		# それ以外はランダム
+		while True:
+			rx = random.randint(0, len(self.board) - 1)
+			ry = random.randint(0, len(self.board) - 1)
+			if self.board[rx][ry] == self.BLANK:
+				self.board[rx][ry] = self.COMPUTER
+				break
+
+	def checkWinner(self):
+		blankcount = 0
+		for i in range(len(self.combination)):
+			usercount = computercount = 0
+			for j in range(len(self.combination[i])):
+				x, y = self.combination[i][j][0], self.combination[i][j][1]
+				if self.board[x][y] == self.USER:
+					usercount += 1
+				elif self.board[x][y] == self.COMPUTER:
+					computercount += 1
+				elif self.board[x][y] == self.BLANK:
+					blankcount += 1
+
+			# ユーザーが勝ちなら
+			if usercount == len(self.board):
+				return self.USER
+
+			# コンピューターが勝ちなら
+			elif computercount == len(self.board):
+				return self.COMPUTER
+
+		# 引き分けなら
+		if blankcount == 0:
+			return self.DRAW
+
+		return self.BLANK
