@@ -5,11 +5,10 @@ import sqlite3
 
 class SettingFrame(tk.Frame):
 
-	WIDTH = 500
-	HEIGHT = 300
-	bgcolor = 'lightgray'
-
 	def __init__(self, parent, controller):
+		self.WIDTH = 500
+		self.HEIGHT = 300
+		self.bgcolor = 'lightgray'
 		tk.Frame.__init__(self, parent, width = self.WIDTH, height = self.HEIGHT, bg = self.bgcolor)
 		self.pack_propagate(0)
 
