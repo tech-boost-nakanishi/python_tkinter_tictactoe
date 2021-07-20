@@ -3,10 +3,9 @@ import main
 
 class MenuFrame(tk.Frame):
 
-	WIDTH = 500
-	HEIGHT = 300
-
 	def __init__(self, parent, controller):
+		self.WIDTH = 500
+		self.HEIGHT = 300
 		tk.Frame.__init__(self, parent, width = self.WIDTH, height = self.HEIGHT)
 		self.pack_propagate(0)
 		self.setController(controller)
