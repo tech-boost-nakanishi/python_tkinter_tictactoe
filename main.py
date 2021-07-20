@@ -74,4 +74,4 @@ def show_frame(targetFrame):
 def launch():
 	root.mainloop()
 
-show_frame('ゲームフレーム')
+show_frame('メニューフレーム')
