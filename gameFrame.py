@@ -1,45 +1,46 @@
 import tkinter as tk
 import main
 from decimal import Decimal, ROUND_HALF_UP
+from tkinter import messagebox
 import time
 import random
 import threading
 
 class GameFrame(tk.Frame):
 
-	WIDTH = 500
-	HEIGHT = 600
-	bgcolor = 'lightgray'
-	BLANK = 0
-	USER = 1
-	COMPUTER = 2
-	DRAW = 3
-	turnnum = BLANK
-	board = []
-	global mx, my
-	mx = my = -1
-	isPut = False
-	combination = [
-		[[0, 0], [1, 0], [2, 0]],
-		[[0, 1], [1, 1], [2, 1]],
-		[[0, 2], [1, 2], [2, 2]],
-		[[0, 0], [0, 1], [0, 2]],
-		[[1, 0], [1, 1], [1, 2]],
-		[[2, 0], [2, 1], [2, 2]],
-		[[0, 0], [1, 1], [2, 2]],
-		[[0, 2], [1, 1], [2, 0]],
-	]
-
 	def __init__(self, parent, controller):
+		self.WIDTH = 500
+		self.HEIGHT = 600
 		tk.Frame.__init__(self, parent, width = self.WIDTH, height = self.HEIGHT)
 		self.pack_propagate(0)
+
+		self.bgcolor = 'lightgray'
+		self.BLANK = 0
+		self.USER = 1
+		self.COMPUTER = 2
+		self.DRAW = 3
+		self.turnnum = self.BLANK
+		self.board = []
+		global mx, my
+		self.mx = self.my = -1
+		self.isPut = False
+		self.combination = [
+			[[0, 0], [1, 0], [2, 0]],
+			[[0, 1], [1, 1], [2, 1]],
+			[[0, 2], [1, 2], [2, 2]],
+			[[0, 0], [0, 1], [0, 2]],
+			[[1, 0], [1, 1], [1, 2]],
+			[[2, 0], [2, 1], [2, 2]],
+			[[0, 0], [1, 1], [2, 2]],
+			[[0, 2], [1, 1], [2, 0]],
+		]
 		
 		global canvas
 		canvas = tk.Canvas(self, width = self.WIDTH, height = self.HEIGHT)
 		canvas.pack()
 
-		tk.Button(self, text = 'メニュー画面へ', bg = self.bgcolor, highlightbackground = self.bgcolor, width = 10, command = lambda: main.show_frame('メニューフレーム')).place(x = 20, y = 505)
-		tk.Button(self, text = '最初から', bg = self.bgcolor, highlightbackground = self.bgcolor, width = 10, command = lambda: main.show_frame('ゲームフレーム')).place(x = 20, y = 535)
+		tk.Button(self, text = '最初から', bg = self.bgcolor, highlightbackground = self.bgcolor, width = 10, command = lambda: main.show_frame('ゲームフレーム')).place(x = 20, y = 505)
+		tk.Button(self, text = 'メニュー画面へ', bg = self.bgcolor, highlightbackground = self.bgcolor, width = 10, command = lambda: main.show_frame('メニューフレーム')).place(x = 20, y = 535)
 		tk.Button(self, text = '設定画面へ', bg = self.bgcolor, highlightbackground = self.bgcolor, width = 10, command = lambda: main.show_frame('設定フレーム')).place(x = 20, y = 565)
 
 		# ボードリストの初期化
@@ -51,16 +52,16 @@ class GameFrame(tk.Frame):
 		settingframe = settingFrame.SettingFrame(main.container, main.root)
 		self.attackvalue = settingframe.getATTACKVALUE()
 		self.xorovalue = settingframe.getXOROVALUE()
-		if self.attackvalue == 1:
+		if self.attackvalue == 0:
 			self.turnnum = self.USER
 		else:
 			self.turnnum = self.COMPUTER
 
+		self.paint()
+
 		self.thread1 = threading.Thread(target=self.start)
 		self.thread1.setDaemon(True)
 		self.thread1.start()
-
-		self.paint()
 
 	def start(self):
 		while True:
@@ -83,8 +84,21 @@ class GameFrame(tk.Frame):
 			self.repaint()
 
 			# 勝敗のチェック
+			winner = self.checkWinner()
+			# ユーザーが勝ちなら
+			if winner == self.USER:
+				messagebox.showinfo('メッセージ', 'あなたの勝ちです。')
+				break
 
-		self.thread1.join()
+			# コンピューターが勝ちなら
+			elif winner == self.COMPUTER:
+				messagebox.showinfo('メッセージ', 'あなたの負けです。')
+				break
+
+			# 引き分けなら
+			elif winner == self.DRAW:
+				messagebox.showinfo('メッセージ', '引き分けです。')
+				break
 
 	def getWidth(self):
 		return self.WIDTH
