@@ -38,9 +38,7 @@ menu.add_command(label='ゲーム終了', command = root.destroy)
 container = tk.Frame(root)
 container.pack()
 
-menuframe = menuFrame.MenuFrame(container, root)
-settingframe = settingFrame.SettingFrame(container, root)
-gameframe = gameFrame.GameFrame(container, root)
+menuframe = settingframe = gameframe = tk.Frame(root)
 
 def show_frame(targetFrame):
 	global WIDTH, HEIGHT, menuframe, settingframe, gameframe
