@@ -67,7 +67,6 @@ class GameFrame(tk.Frame):
 		while True:
 			# ユーザーのターン
 			if self.turnnum == self.USER:
-				print('ユーザー')
 				while True:
 					if self.isPut == True:
 						break
@@ -76,7 +75,6 @@ class GameFrame(tk.Frame):
 			# コンピューターのターン
 			elif self.turnnum == self.COMPUTER:
 				time.sleep(0.5)
-				print('コンピューター')
 				self.computerAI()
 				self.turnnum = self.USER
 
