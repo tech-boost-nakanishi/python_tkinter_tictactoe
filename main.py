@@ -43,8 +43,14 @@ menuframe = settingframe = gameframe = tk.Frame(root)
 def show_frame(targetFrame):
 	global WIDTH, HEIGHT, menuframe, settingframe, gameframe
 
+	try:
+		if gameframe.thread1.is_alive():
+			gameframe.stop()
+	except AttributeError:
+		pass
+
 	for frame in (menuframe, settingframe, gameframe):
-		frame.pack_forget()
+		frame.destroy()
 
 	if targetFrame == 'メニューフレーム':
 		menuframe = menuFrame.MenuFrame(container, root)

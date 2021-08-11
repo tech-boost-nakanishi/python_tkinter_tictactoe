@@ -23,6 +23,7 @@ class GameFrame(tk.Frame):
 		self.board = []
 		global mx, my
 		self.mx = self.my = -1
+		self.running = True
 		self.isPut = False
 		self.combination = [
 			[[0, 0], [1, 0], [2, 0]],
@@ -64,7 +65,7 @@ class GameFrame(tk.Frame):
 		self.thread1.start()
 
 	def start(self):
-		while True:
+		while self.running:
 			# ユーザーのターン
 			if self.turnnum == self.USER:
 				while True:
@@ -77,6 +78,9 @@ class GameFrame(tk.Frame):
 				time.sleep(0.5)
 				self.computerAI()
 				self.turnnum = self.USER
+
+			if self.running == False:
+				break
 
 			# 再描画
 			self.repaint()
@@ -97,6 +101,10 @@ class GameFrame(tk.Frame):
 			elif winner == self.DRAW:
 				messagebox.showinfo('メッセージ', '引き分けです。')
 				break
+
+	def stop(self):
+		self.isPut = True
+		self.running = False
 
 	def getWidth(self):
 		return self.WIDTH
